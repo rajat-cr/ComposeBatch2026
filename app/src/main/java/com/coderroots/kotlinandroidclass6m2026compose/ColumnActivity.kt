@@ -13,7 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
@@ -73,7 +78,9 @@ fun ColumnScreen(){
             },
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = colorResource(R.color.white),
-                focusedContainerColor = colorResource(R.color.white)
+                focusedContainerColor = colorResource(R.color.white),
+                focusedIndicatorColor = colorResource(R.color.purple_200)
+
             )
         )
         Spacer(Modifier.height(10.dp))
@@ -87,11 +94,30 @@ fun ColumnScreen(){
                 Text("Enter Password")
             },
 
+
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = colorResource(R.color.white),
-                focusedContainerColor = colorResource(R.color.white)
+                focusedContainerColor = colorResource(R.color.white),
+                focusedIndicatorColor = colorResource(R.color.purple_200)
             )
         )
+        Spacer(Modifier.height(10.dp))
+        Text("Forget Password ?",
+            textAlign = TextAlign.End,
+            modifier = Modifier.fillMaxWidth().padding(end = 10.dp))
+        Spacer(Modifier.height(20.dp))
+        ElevatedButton(
+            onClick = {
+
+            },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            shape = RoundedCornerShape(7.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(R.color.purple_200)
+            )
+        ) {
+            Text("Login")
+        }
     }
 
 }
