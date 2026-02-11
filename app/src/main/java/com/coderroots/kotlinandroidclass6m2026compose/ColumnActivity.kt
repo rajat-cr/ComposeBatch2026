@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 class ColumnActivity:  ComponentActivity() {
 
@@ -42,7 +43,7 @@ class ColumnActivity:  ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ColumnScreen()
+           // ColumnScreen()
         }
     }
 }
@@ -50,7 +51,7 @@ class ColumnActivity:  ComponentActivity() {
 
 @Preview(showSystemUi = true)
 @Composable
-fun ColumnScreen(){
+fun ColumnScreen(navController: NavController){
     var etEmail by remember { mutableStateOf("") }
     var etPassword by remember { mutableStateOf("") }
 
@@ -93,8 +94,6 @@ fun ColumnScreen(){
             placeholder = {
                 Text("Enter Password")
             },
-
-
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = colorResource(R.color.white),
                 focusedContainerColor = colorResource(R.color.white),
@@ -108,7 +107,7 @@ fun ColumnScreen(){
         Spacer(Modifier.height(20.dp))
         ElevatedButton(
             onClick = {
-
+                navController.navigate("home")
             },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
             shape = RoundedCornerShape(7.dp),
