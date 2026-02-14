@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,6 +39,8 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -653,6 +656,8 @@ fun SettingScreen() {
 fun HomeScreen() {
 val studentList = remember { mutableStateListOf<String>("Abhishek","Rajneesh","Mukesh","Rajat") }
     var showDialog by remember { mutableStateOf(false) }
+    var alertDialog by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(-1) }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -684,8 +689,8 @@ val studentList = remember { mutableStateListOf<String>("Abhishek","Rajneesh","M
                         )
                         ElevatedButton(
                             onClick = {
-                                studentList.removeAt(index)
-                                println("StudentList Check: ${studentList}")
+                               selectedIndex = index
+                                alertDialog = true
                             },
                             modifier = Modifier.padding(end = 10.dp)
 
@@ -695,7 +700,8 @@ val studentList = remember { mutableStateListOf<String>("Abhishek","Rajneesh","M
 
                         ElevatedButton(
                             onClick = {
-
+                                showDialog = true
+                                selectedIndex =  index
                             },
                             modifier = Modifier.padding(end = 10.dp)
 
@@ -721,18 +727,88 @@ val studentList = remember { mutableStateListOf<String>("Abhishek","Rajneesh","M
             ShowDialogBox(
                 showDialog = showDialog,
                 dismiss = { showDialog = false},
-                studentList = studentList
+                studentList = studentList,
+                selectedIndex = selectedIndex
             )
+        }
+
+        if(alertDialog){
+           OpenAlertDialog(
+               alertDialog =alertDialog,
+               dismiss = {alertDialog = false},
+               studentList =studentList,
+               selectedIndex = selectedIndex
+           )
         }
     }
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowDialogBox(showDialog: Boolean, dismiss: () -> Unit, studentList: SnapshotStateList<String>) {
+fun OpenAlertDialog(
+    alertDialog: Boolean,
+    dismiss: () -> Unit,
+    studentList: SnapshotStateList<String>,
+    selectedIndex: Int
+) {
+
+    println("Check OpenAlertDialog :$alertDialog")
+    BasicAlertDialog(
+        onDismissRequest = dismiss,
+
+        content = {
+            Card(Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp)) {
+                Column(Modifier.fillMaxWidth().padding(10.dp).background(color = Color.White)) {
+                    Text("Delete Student Name")
+
+                    Row(
+                        Modifier.fillMaxWidth().padding(10.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        ElevatedButton(onClick = {
+
+                        },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.purple_200)
+                            )
+                            ) {
+                            Text("Delete")
+                        }
+                        Spacer(Modifier.width(5.dp))
+                        OutlinedButton(onClick = {
+
+                        }) {
+                            Text("Cancel")
+                        }
+                    }
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun ShowDialogBox(
+    showDialog: Boolean,
+    dismiss: () -> Unit,
+    studentList: SnapshotStateList<String>,
+    selectedIndex: Int
+) {
 
     var name by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+
+    if(selectedIndex != -1){
+        name = studentList[selectedIndex]
+
+
+    }
 
     Dialog(
         onDismissRequest = {
@@ -744,7 +820,10 @@ fun ShowDialogBox(showDialog: Boolean, dismiss: () -> Unit, studentList: Snapsho
         content = {
             Column(Modifier.fillMaxWidth().background(color = Color.White).padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Add Student Name",
+                Text( if(selectedIndex!=-1)
+                    "Update Student Name"
+                    else
+                    "Add Student Name",
                     fontSize =25.sp,
                     fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
@@ -757,6 +836,7 @@ fun ShowDialogBox(showDialog: Boolean, dismiss: () -> Unit, studentList: Snapsho
                 )
                 Spacer(Modifier.height(10.dp))
                 ElevatedButton(
+
                     onClick = {
                         if(name.isEmpty())
                         {
@@ -765,8 +845,14 @@ fun ShowDialogBox(showDialog: Boolean, dismiss: () -> Unit, studentList: Snapsho
                             if(studentList.contains(name)){
                                 Toast.makeText(context,"This name already exist", Toast.LENGTH_SHORT).show()
                             }else {
-                                studentList.add(name)
-                                dismiss()
+
+                                if (selectedIndex == -1) {
+                                    studentList.add(name)
+                                    dismiss()
+                                }else{
+                                    studentList[selectedIndex]=name
+                                    dismiss()
+                                }
                             }
                         }
 
@@ -774,7 +860,11 @@ fun ShowDialogBox(showDialog: Boolean, dismiss: () -> Unit, studentList: Snapsho
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                     shape = RoundedCornerShape(7.dp)
                 ) {
-                    Text("Save")
+                    Text(if(selectedIndex!=-1)
+                        "Update"
+                        else
+
+                        "Save")
                 }
 
             }
