@@ -83,6 +83,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.coderroots.kotlinandroidclass6m2026compose.roomdb.RoomScreen
 
 class ScrollColumnActivity: ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -294,7 +295,7 @@ class ScrollColumnActivity: ComponentActivity() {
                             HomeScreen()
                         }
                         composable("setting") {
-                            SettingScreen()
+                            RoomScreen()
                         }
                         composable("profile") {
                             ProfileScreen()
@@ -755,7 +756,9 @@ fun OpenAlertDialog(
 
     println("Check OpenAlertDialog :$alertDialog")
     BasicAlertDialog(
-        onDismissRequest = dismiss,
+        onDismissRequest = {
+            dismiss()
+        },
 
         content = {
             Card(Modifier.fillMaxWidth(),
@@ -771,7 +774,8 @@ fun OpenAlertDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         ElevatedButton(onClick = {
-
+                            studentList.removeAt(selectedIndex)
+                                dismiss()
                         },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colorResource(R.color.purple_200)
@@ -781,7 +785,7 @@ fun OpenAlertDialog(
                         }
                         Spacer(Modifier.width(5.dp))
                         OutlinedButton(onClick = {
-
+                            dismiss()
                         }) {
                             Text("Cancel")
                         }
