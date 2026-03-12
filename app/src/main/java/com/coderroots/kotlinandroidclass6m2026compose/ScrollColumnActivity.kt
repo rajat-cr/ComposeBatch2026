@@ -1,5 +1,7 @@
 package com.coderroots.kotlinandroidclass6m2026compose
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -57,6 +59,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -292,7 +295,7 @@ class ScrollColumnActivity: ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)){
                         composable("home") {
-                            HomeScreen()
+                            SettingScreen()
                         }
                         composable("setting") {
                             RoomScreen()
@@ -645,11 +648,59 @@ fun ProfileScreen() {
 
 @Composable
 fun SettingScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Text("Setting Screen")
+    var name by remember { mutableStateOf("") }
+    var context = LocalContext.current
+    val sharedPref = context.getSharedPreferences("AdminData", Context.MODE_PRIVATE)
+    val editor  = sharedPref.edit()
+    var showName by  remember { mutableStateOf("") }
+
+
+    LaunchedEffect(Unit) {
+        showName = getSharedPref(sharedPref)
+    }
+
+
+
+
+
+    Box(Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center) {
+        Column(Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = name,
+                onValueChange = { name = it },
+                singleLine = true,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth().padding(10.dp)
+            )
+            ElevatedButton(
+                onClick = {
+                    if(name.isEmpty()){
+                        Toast.makeText(context, "Enter Name",Toast.LENGTH_SHORT).show()
+                    }else{
+                        editor.putString("name",name)
+                        editor.apply()
+                        showName =  getSharedPref(sharedPref)
+                    }
+
+                },
+                shape = RoundedCornerShape(7.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Blue
+                )
+            ) {
+                Text("Save Data")
+            }
+            Spacer(Modifier.height(10.dp))
+            Text(if(showName.isNotEmpty())
+                showName
+            else
+                "Wait for Msg"
+            )
+        }
     }
 }
 @Preview(showSystemUi = true)
@@ -874,4 +925,8 @@ fun ShowDialogBox(
             }
         }
     )
+}
+
+fun getSharedPref(sharedPref: SharedPreferences): String {
+    return sharedPref.getString("name","")?:""
 }
