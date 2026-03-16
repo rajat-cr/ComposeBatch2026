@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -28,6 +30,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +51,7 @@ import com.coderroots.kotlinandroidclass6m2026compose.roomdb.OpenShowDialog
 import com.coderroots.kotlinandroidclass6m2026compose.roomdb.StudentDatabase
 import com.coderroots.kotlinandroidclass6m2026compose.roomdb.StudentEntity
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,6 +74,36 @@ class FireStoreActivity: ComponentActivity() {
 @Composable
 fun FireStoreLazyScreen() {
     var showDialog by remember { mutableStateOf(false) }
+    val db = Firebase.firestore
+    var studentList = remember { mutableStateListOf<UserDataModel>() }
+
+
+    db.collection("UserData").addSnapshotListener { snapshots, exception ->
+        if(exception!=null){
+            return@addSnapshotListener
+        }
+
+        for(doc in snapshots!!.documentChanges){
+            when(doc.type){
+                DocumentChange.Type.ADDED->{
+                    var model = doc.document.toObject(UserDataModel::class.java)
+                    model.id = doc.document.id
+                    studentList.add(model)
+                    println("StudentList After Snapshot: $studentList")
+                }
+                DocumentChange.Type.MODIFIED->{
+
+                }
+                DocumentChange.Type.REMOVED->{
+
+                }
+
+                else -> {}
+            }
+
+        }
+
+    }
 
     Scaffold(
         topBar = {
@@ -78,9 +113,21 @@ fun FireStoreLazyScreen() {
                 )
                 )
         }
-    ) {
+    ) {innerPadding->
 
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize().padding(innerPadding)) {
+            LazyColumn(Modifier.fillMaxSize()) {
+                items(studentList.size){index->
+                    Card(Modifier.fillMaxWidth().padding(10.dp)) {
+                        Column(Modifier.fillMaxWidth().padding(5.dp)) {
+                            Text(studentList[index].name.toString())
+                            Spacer(Modifier.height(5.dp))
+                            Text(studentList[index].className.toString())
+
+                        }
+                    }
+                }
+            }
             FloatingActionButton(
                 onClick = {
                     showDialog = true
@@ -165,6 +212,7 @@ fun OpenFirebaseDialog(
                             db.collection("UserData").add(entity).addOnCompleteListener {
                                 if(it.isSuccessful){
                                     Toast.makeText(context,"Data Added Successfully", Toast.LENGTH_SHORT).show()
+                                    dismiss()
                                 }else{
                                     Toast.makeText(context,it.exception?.message, Toast.LENGTH_SHORT).show()
                                 }
