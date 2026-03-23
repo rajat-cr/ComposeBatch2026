@@ -5,3 +5,9 @@ data class UserDataModel(
     val name: String? = null,
     val className: String? =null
 )
+
+data class UserLogin(
+    var id: String? = null,
+    val name: String? = null,
+    val email: String? =null
+)

@@ -99,7 +99,7 @@ fun FireStoreLazyScreen() {
                 DocumentChange.Type.REMOVED->{
 
                 }
-                
+
             }
 
         }
