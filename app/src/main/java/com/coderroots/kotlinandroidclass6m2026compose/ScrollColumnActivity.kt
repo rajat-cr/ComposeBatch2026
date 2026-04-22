@@ -861,8 +861,6 @@ fun ShowDialogBox(
 
     if(selectedIndex != -1){
         name = studentList[selectedIndex]
-
-
     }
 
     Dialog(

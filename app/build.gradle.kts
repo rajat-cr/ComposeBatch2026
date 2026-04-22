@@ -67,4 +67,22 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation ("androidx.room:room-ktx:$roomVersion")
 
+    implementation("io.coil-kt:coil-compose:2.6.0")
+//    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.5.0")
+//
+//    implementation("io.github.jan-tennert.supabase:storage-:2.5.0")
+//    implementation("io.ktor:ktor-client-android::2.5.0")
+
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
+
+    // Core Supabase and Storage module
+//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.0.0")
+
+    // Required Ktor engine (Android example)
+    implementation("io.ktor:ktor-client-android:2.00")
+
+
+
+
 }
