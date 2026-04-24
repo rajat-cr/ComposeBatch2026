@@ -40,7 +40,9 @@ import coil.compose.AsyncImage
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class ImagePickerActivity: ComponentActivity(){
@@ -77,14 +79,19 @@ fun ImagePikerScreen(){
 
     val pickGallery = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         imageUri = it
-        val fileName = "${System.currentTimeMillis()}.jpg"
-        val inputSream = context.contentResolver.openInputStream(imageUri!!)
-        val bytes = inputSream?.readBytes()?: return@rememberLauncherForActivityResult
+        CoroutineScope(Dispatchers.IO).launch {
+            val fileName = "${System.currentTimeMillis()}.jpg"
+            val inputSream = context.contentResolver.openInputStream(imageUri!!)
+            val bytes = inputSream?.readBytes()
 
-        val bucket = supabase.storage.from("image_gallery")
+            val bucket = supabase.storage.from("image_gallery")
             bucket.upload(
-            path = fileName,
-            data = bytes)
+                path = fileName,
+                data = bytes!!,
+            )
+            val getUrl = bucket.publicUrl(fileName)
+            println("Get Image Public Url: $getUrl")
+        }
     }
 
     Column(Modifier.fillMaxSize(),
