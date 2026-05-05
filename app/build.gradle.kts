@@ -68,25 +68,15 @@ dependencies {
     implementation ("androidx.room:room-ktx:$roomVersion")
 
     implementation("io.coil-kt:coil-compose:2.6.0")
-//    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.5.0")
-//
-//    implementation("io.github.jan-tennert.supabase:storage-:2.5.0")
-//    implementation("io.ktor:ktor-client-android::2.5.0")
+
 
     implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
 
-    // Core Supabase and Storage module
-    //implementation("io.github.jan-tennert.supabase:storage")
+
     implementation("io.github.jan-tennert.supabase:storage-kt")
 
-    // Required Ktor engine (Android example)
-    val ktor_version = "2.3.7"
-
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-android:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-client-plugins:$ktor_version") // MUST
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    // ✅ ONLY THIS KTOR DEPENDENCY ADD KARO
+    implementation("io.ktor:ktor-client-android:3.0.0")
 
 
 

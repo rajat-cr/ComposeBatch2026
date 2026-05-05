@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
+import com.google.firebase.firestore.FirebaseFirestore
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
@@ -59,6 +60,7 @@ class ImagePickerActivity: ComponentActivity(){
 @Preview(showSystemUi = true)
 @Composable
 fun ImagePikerScreen(){
+
     val supabase = createSupabaseClient(
             supabaseUrl = SupabseObject.supabaseUrl,
             supabaseKey = SupabseObject.supabaseKey
@@ -91,13 +93,22 @@ fun ImagePikerScreen(){
             )
             val getUrl = bucket.publicUrl(fileName)
             println("Get Image Public Url: $getUrl")
+            val hashMap = HashMap<String, String>()
+            hashMap.put("imageUrl",getUrl)
+            FirebaseFirestore.getInstance().collection("SaveImage").add(hashMap).addOnCompleteListener {
+                if(it.isSuccessful){
+                    Toast.makeText(context,"Image Saved", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context,it.exception?.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
     }
 
     Column(Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
-
 
         AsyncImage(
             model = imageUri,
@@ -117,7 +128,6 @@ fun ImagePikerScreen(){
         ) {
             Text("Open Gallery")
         }
-
     }
 }
 
